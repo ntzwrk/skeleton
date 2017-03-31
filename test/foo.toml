@@ -1,3 +1,4 @@
 touch = ['a']
 mkdir = ['b']
 exec = ['c']
+gitignore = ['rust', 'vim']

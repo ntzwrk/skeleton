@@ -1,5 +1,5 @@
 [package]
-name = "pro-man"
+name = "skeleton"
 version = "0.1.0"
 authors = ["Valentin Brandl <vbrandl@riseup.net>"]
 
@@ -7,6 +7,6 @@ authors = ["Valentin Brandl <vbrandl@riseup.net>"]
 toml = "0.3.*"
 serde = "0.9"
 serde_derive = "0.9"
-clap = "*"
+clap = "2.22.*"
 hyper = "0.10.*"
 hyper-native-tls = "0.2.*"

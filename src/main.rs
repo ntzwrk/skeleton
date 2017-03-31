@@ -7,7 +7,7 @@ extern crate hyper_native_tls;
 
 mod gitignore;
 
-use std::fs::{File, create_dir};
+use std::fs::{File, OpenOptions, create_dir};
 use std::io::{BufReader, Result, Error, ErrorKind};
 use std::io::prelude::*;
 use std::process::exit;
@@ -19,12 +19,10 @@ struct Config {
     mkdir: Option<Vec<String>>,
     touch: Option<Vec<String>>,
     exec: Option<Vec<String>>,
+    gitignore: Option<Vec<String>>,
 }
 
 fn main() {
-    let res = gitignore::get_gitignore(vec!["rust".to_string(), "vim".to_string()]).unwrap();
-    println!("{}", res);
-    exit(1);
     let matches = App::new("test")
         .version("0.1")
         .author("Valentin B. <mail@mail.mail>")
@@ -51,6 +49,20 @@ fn main() {
     // println!("mkdir: {}", (config.mkdir.unwrap())[0]);
     for dir in config.mkdir.unwrap() {
         create_dir(dir);
+    }
+
+    match config.gitignore {
+        Some(gi) => {
+            let ign = gitignore::get_gitignore(gi).unwrap();
+            let mut file = OpenOptions::new()
+                .write(true)
+                .append(true)
+                .create(true)
+                .open("gitignore")
+                .unwrap();
+            writeln!(file, "{}", ign);
+        }
+        None => {}
     }
     println!("touch: {}", (config.touch.unwrap())[0]);
     println!("exec: {}", (config.exec.unwrap())[0]);
