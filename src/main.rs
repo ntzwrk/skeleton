@@ -12,6 +12,7 @@ use std::io::{BufReader, Result, Error, ErrorKind};
 use std::io::prelude::*;
 use std::path::Path;
 use std::process::{exit, Command};
+use std::env;
 
 use clap::{App, SubCommand};
 
@@ -34,19 +35,59 @@ fn main() {
                         .arg_from_usage("<NAME>   'The project name'"))
         .subcommand(SubCommand::with_name("init").about("initialize existing project"))
         .get_matches();
-    let lang = matches.value_of("lang").unwrap().to_string();
+    let lang = matches.value_of("lang").unwrap();
 
     if let Some(matches) = matches.subcommand_matches("new") {
         println!("doing new {}", matches.value_of("NAME").unwrap());
     }
 
-    let config: Config = match parse_config(lang) {
+    let mut config_path = match env::home_dir() {
+        Some(path) => {
+            match path.to_str() {
+                Some(p) => p.to_string(),
+                None => {
+                    println!("Could not resolve $HOME");
+                    exit(1);
+                }
+            }
+        }
+        None => {
+            println!("Could not resolve $HOME");
+            exit(1);
+        }
+    };
+
+    config_path.push_str("/.skeleton/");
+    config_path.push_str(lang);
+    config_path.push_str(".toml");
+
+    let config: Config = match parse_config(config_path) {
         Ok(c) => c,
         Err(err) => {
             println!("Error while parsing config! {:?}", err);
             exit(1);
         }
     };
+
+    if let Some(subcmd) = matches.subcommand_matches("new") {
+        let name = subcmd.value_of("NAME").unwrap();
+        if file_exists(&name.to_string()) {
+            println!("A file or directory with that name already exists");
+            exit(1);
+        } else {
+            match create_dir(name.clone()) {
+                Ok(_) => println!("Created directory '{}'", name),
+                Err(e) => {
+                    println!("Could not create direcotry '{}'. {:?}", name, e);
+                    exit(1);
+                }
+            }
+            if let Err(e) = env::set_current_dir(Path::new(&*name)) {
+                println!("Could not change directory!");
+                exit(1);
+            }
+        }
+    }
 
     if let Some(dirs) = config.mkdir {
         for dir in dirs {
