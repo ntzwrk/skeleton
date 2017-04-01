@@ -11,7 +11,7 @@ use std::fs::{File, OpenOptions, create_dir};
 use std::io::{BufReader, Result, Error, ErrorKind};
 use std::io::prelude::*;
 use std::path::Path;
-use std::process::exit;
+use std::process::{exit, Command};
 
 use clap::{App, SubCommand};
 
@@ -24,10 +24,10 @@ struct Config {
 }
 
 fn main() {
-    let matches = App::new("test")
+    let matches = App::new("Skeleton")
         .version("0.1")
         .author("Valentin B. <mail@mail.mail>")
-        .about("Project manager")
+        .about("Skeleton project manager")
         .args_from_usage("-l, --lang=<LANG>  'Set language configuration'")
         .subcommand(SubCommand::with_name("new")
                         .about("create new project")
@@ -84,7 +84,14 @@ fn main() {
 
     if let Some(cmds) = config.exec {
         for cmd in cmds {
-            exec(&cmd);
+            println!("Executing '{}'", cmd);
+            match exec(&cmd) {
+                Ok((out, err)) => {
+                    println!("stdout: {}", out);
+                    println!("stderr: {}", err);
+                }
+                Err(e) => println!("Failed to execute: {:?}", e),
+            }
         }
     }
 }
@@ -93,21 +100,42 @@ fn file_exists(name: &String) -> bool {
     Path::new(&name).exists()
 }
 
-fn exec(cmd: &String) {
-    println!("exec: {}", cmd);
+fn exec(cmd: &String) -> Result<(String, String)> {
+    #[cfg(unix)]
+    let shell = "sh";
+    #[cfg(unix)]
+    let arg1 = "-c";
+    #[cfg(windows)]
+    let shell = "cmd.exe";
+    #[cfg(windows)]
+    let arg1 = "/C";
+
+    let out = match Command::new(shell).arg(arg1).arg(cmd).output() {
+        Ok(o) => o,
+        Err(e) => return Err(e),
+    };
+
+    let stdout = match String::from_utf8(out.stdout) {
+        Ok(so) => so,
+        Err(e) => return Err(Error::new(ErrorKind::InvalidInput, e)),
+    };
+
+    let stderr = match String::from_utf8(out.stderr) {
+        Ok(se) => se,
+        Err(e) => return Err(Error::new(ErrorKind::InvalidInput, e)),
+    };
+
+    Ok((stdout, stderr))
 }
 
 fn create_file(file_name: &String) -> bool {
-    if !file_exists(&file_name) {
-        match OpenOptions::new()
-                  .append(true)
-                  .create(true)
-                  .open(file_name) {
-            Ok(_) => true,
-            Err(_) => false,
-        }
-    } else {
-        false
+    !file_exists(&file_name) &&
+    match OpenOptions::new()
+              .append(true)
+              .create(true)
+              .open(file_name) {
+        Ok(_) => true,
+        Err(_) => false,
     }
 }
 
@@ -143,5 +171,15 @@ fn test_parse_config() {
     assert_eq!(touch, vec!["a".to_string()]);
 
     let exec = conf.exec.unwrap();
-    assert_eq!(exec, vec!["c".to_string()]);
+    assert_eq!(exec, vec!["touch asdf".to_string()]);
+}
+
+#[test]
+fn test_exec() {
+    let (stdout, stderr) = exec(&"echo -n test".to_string()).unwrap();
+    assert_eq!(stdout, "test".to_string());
+    assert_eq!(stderr, "".to_string());
+    let (stdout, stderr) = exec(&"echo -n test 1>&2".to_string()).unwrap();
+    assert_eq!(stdout, "".to_string());
+    assert_eq!(stderr, "test".to_string());
 }

@@ -1,4 +1,4 @@
 touch = ['a']
 mkdir = ['b']
-exec = ['c']
+exec = ['touch asdf']
 gitignore = ['rust', 'vim']
