@@ -10,6 +10,7 @@ mod gitignore;
 use std::fs::{File, OpenOptions, create_dir};
 use std::io::{BufReader, Result, Error, ErrorKind};
 use std::io::prelude::*;
+use std::path::Path;
 use std::process::exit;
 
 use clap::{App, SubCommand};
@@ -27,7 +28,7 @@ fn main() {
         .version("0.1")
         .author("Valentin B. <mail@mail.mail>")
         .about("Project manager")
-        .args_from_usage("-l, --lang=[LANG]  'Set language configuration'")
+        .args_from_usage("-l, --lang=<LANG>  'Set language configuration'")
         .subcommand(SubCommand::with_name("new")
                         .about("create new project")
                         .arg_from_usage("<NAME>   'The project name'"))
@@ -46,26 +47,68 @@ fn main() {
             exit(1);
         }
     };
-    // println!("mkdir: {}", (config.mkdir.unwrap())[0]);
-    for dir in config.mkdir.unwrap() {
-        create_dir(dir);
+
+    if let Some(dirs) = config.mkdir {
+        for dir in dirs {
+            if !file_exists(&dir) {
+                match create_dir(dir.clone()) {
+                    Ok(_) => println!("Created directory '{}'", dir),
+                    Err(e) => println!("Could not create directory '{}'. {:?}", dir, e),
+                }
+            } else {
+                println!("Directory '{}' already exists", dir);
+            }
+        }
     }
 
-    match config.gitignore {
-        Some(gi) => {
-            let ign = gitignore::get_gitignore(gi).unwrap();
-            let mut file = OpenOptions::new()
-                .write(true)
-                .append(true)
-                .create(true)
-                .open("gitignore")
-                .unwrap();
+    if let Some(gi) = config.gitignore {
+        let ign = gitignore::get_gitignore(gi).unwrap();
+        let file = OpenOptions::new()
+            .create_new(true)
+            .append(true)
+            .open("gitignore");
+        if let Ok(mut file) = file {
             writeln!(file, "{}", ign);
+        } else {
+            println!("Could not write .gitignore");
         }
-        None => {}
     }
-    println!("touch: {}", (config.touch.unwrap())[0]);
-    println!("exec: {}", (config.exec.unwrap())[0]);
+
+    if let Some(fnames) = config.touch {
+        for file in fnames {
+            if !create_file(&file) {
+                println!("Could not create file '{}'", file);
+            }
+        }
+    }
+
+    if let Some(cmds) = config.exec {
+        for cmd in cmds {
+            exec(&cmd);
+        }
+    }
+}
+
+fn file_exists(name: &String) -> bool {
+    Path::new(&name).exists()
+}
+
+fn exec(cmd: &String) {
+    println!("exec: {}", cmd);
+}
+
+fn create_file(file_name: &String) -> bool {
+    if !file_exists(&file_name) {
+        match OpenOptions::new()
+                  .append(true)
+                  .create(true)
+                  .open(file_name) {
+            Ok(_) => true,
+            Err(_) => false,
+        }
+    } else {
+        false
+    }
 }
 
 fn parse_config(file_name: String) -> Result<Config> {
@@ -79,4 +122,26 @@ fn parse_config(file_name: String) -> Result<Config> {
         Ok(c) => Ok(c),
         Err(err) => Err(Error::new(ErrorKind::InvalidInput, err)),
     }
+}
+
+#[test]
+fn test_file_exists() {
+    assert!(file_exists(&"test/foo.toml".to_string()));
+    assert!(!file_exists(&"test/none".to_string()));
+}
+
+#[test]
+fn test_parse_config() {
+    let conf = parse_config("test/foo.toml".to_string()).unwrap();
+    let gi = conf.gitignore.unwrap();
+    assert_eq!(gi, vec!["rust".to_string(), "vim".to_string()]);
+
+    let mkd = conf.mkdir.unwrap();
+    assert_eq!(mkd, vec!["b".to_string()]);
+
+    let touch = conf.touch.unwrap();
+    assert_eq!(touch, vec!["a".to_string()]);
+
+    let exec = conf.exec.unwrap();
+    assert_eq!(exec, vec!["c".to_string()]);
 }
