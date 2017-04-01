@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/ntzwrk/skeleton.svg?branch=master)](https://travis-ci.org/ntzwrk/skeleton)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/ntzwrk/skeleton/blob/master/LICENSE)
+[![crates.io](https://meritbadge.herokuapp.com/skeleton)](https://crates.io/crates/skeleton)
 
 Skeleton is a management tool for project prototypes. Prototypes are defined in language specific toml files. Skeleton can create directories, touch files, execute predefined commands and download a .gitignore list from [gitignore.io](https://gitignore.io).
 
