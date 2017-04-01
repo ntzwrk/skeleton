@@ -7,6 +7,16 @@ Skeleton is a management tool for project prototypes. Prototypes are defined in 
 
 Skeleton is written in pure Rust because I wanted to learn this language using a small hobby project.
 
+## Installation
+
+To install skeleton, you need the Rust package manager [cargo](https://github.com/rust-lang/cargo).
+
+```
+git clone https://github.com/ntzwrk/skeleton.git
+cd skeleton
+cargo install
+```
+
 ## Configuration
 
 Language specific configuration must be placed in `${HOME}/.skeleton` and are referenced by their name without the `.toml` extension.

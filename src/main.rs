@@ -82,7 +82,7 @@ fn main() {
                     exit(1);
                 }
             }
-            if let Err(e) = env::set_current_dir(Path::new(&*name)) {
+            if let Err(_) = env::set_current_dir(Path::new(&*name)) {
                 println!("Could not change directory!");
                 exit(1);
             }
