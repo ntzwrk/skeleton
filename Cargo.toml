@@ -12,9 +12,9 @@ license = "MIT"
 travis-ci = { repository = "ntzwrk/skeleton", branch = "master" }
 
 [dependencies]
-toml = "0.3.*"
+toml = "0.3"
 serde = "0.9"
 serde_derive = "0.9"
-clap = "2.22.*"
-hyper = "0.10.*"
-hyper-native-tls = "0.2.*"
+clap = "2.22"
+hyper = "0.10"
+hyper-native-tls = "0.2"
