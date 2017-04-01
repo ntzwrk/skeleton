@@ -22,6 +22,7 @@ struct Config {
     touch: Option<Vec<String>>,
     exec: Option<Vec<String>>,
     gitignore: Option<Vec<String>>,
+    include: Option<Vec<String>>,
 }
 
 fn main() {
