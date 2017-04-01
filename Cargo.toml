@@ -9,7 +9,7 @@ readme = "README.md"
 license = "MIT"
 
 [badges]
-travis-ci = { repository = "https://github.com/ntzwrk/skeleton", branch = "master" }
+travis-ci = { repository = "ntzwrk/skeleton", branch = "master" }
 
 [dependencies]
 toml = "0.3.*"
