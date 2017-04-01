@@ -7,7 +7,7 @@ extern crate hyper_native_tls;
 
 mod gitignore;
 
-use std::fs::{File, OpenOptions, create_dir};
+use std::fs::{File, OpenOptions, create_dir, read_dir};
 use std::io::{BufReader, Result, Error, ErrorKind};
 use std::io::prelude::*;
 use std::path::Path;
@@ -89,6 +89,11 @@ fn main() {
         }
     }
 
+    if !dir_is_empty(&".".to_string()) {
+        println!("Direcotry is not empty!");
+        exit(1);
+    }
+
     if let Some(dirs) = config.mkdir {
         for dir in dirs {
             if !file_exists(&dir) {
@@ -135,6 +140,15 @@ fn main() {
             }
         }
     }
+}
+
+fn dir_is_empty(dir: &String) -> bool {
+    let paths = read_dir(dir).unwrap();
+
+    for _ in paths {
+        return false;
+    }
+    true
 }
 
 fn file_exists(name: &String) -> bool {
@@ -223,4 +237,10 @@ fn test_exec() {
     let (stdout, stderr) = exec(&"echo -n test 1>&2".to_string()).unwrap();
     assert_eq!(stdout, "".to_string());
     assert_eq!(stderr, "test".to_string());
+}
+
+#[test]
+fn test_dir_is_empty() {
+    let is_empty = dir_is_empty(&"./test".to_string());
+    assert!(!is_empty);
 }
