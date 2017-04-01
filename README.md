@@ -12,6 +12,12 @@ Skeleton is written in pure Rust because I wanted to learn this language using a
 To install skeleton, you need the Rust package manager [cargo](https://github.com/rust-lang/cargo).
 
 ```
+cargo install skeleton
+```
+
+To install the most current version from master (might be buggy):
+
+```
 git clone https://github.com/ntzwrk/skeleton.git
 cd skeleton
 cargo install
