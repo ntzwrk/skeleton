@@ -2,6 +2,14 @@
 name = "skeleton"
 version = "0.1.0"
 authors = ["Valentin Brandl <vbrandl@riseup.net>"]
+description = "Skeleton project manager"
+homepage = "https://github.com/ntzwrk/skeleton"
+repository = "https://github.com/ntzwrk/skeleton"
+readme = "README.md"
+license = "MIT"
+
+[badges]
+travis-ci = { repository = "https://github.com/ntzwrk/skeleton", branch = "master" }
 
 [dependencies]
 toml = "0.3.*"
