@@ -1,12 +1,14 @@
 [package]
 name = "skeleton"
-version = "0.2.0"
+version = "0.2.1"
 authors = ["Valentin Brandl <vbrandl@riseup.net>"]
 description = "Skeleton project manager"
 homepage = "https://github.com/ntzwrk/skeleton"
 repository = "https://github.com/ntzwrk/skeleton"
 readme = "README.md"
 license = "MIT"
+
+build = "build.rs"
 
 [badges]
 travis-ci = { repository = "ntzwrk/skeleton", branch = "master" }
@@ -18,3 +20,6 @@ serde_derive = "0.9"
 clap = "2.22"
 hyper = "0.10"
 hyper-native-tls = "0.2"
+
+[build-dependencies]
+clap = "2.22"

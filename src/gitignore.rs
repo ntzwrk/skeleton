@@ -1,5 +1,4 @@
 extern crate hyper;
-extern crate hyper_native_tls;
 
 use std::io::Read;
 use std::iter::Iterator;

@@ -40,8 +40,8 @@ include = ['global']
 
 ## Usage
 ```
-Skeleton 0.2.0
-Valentin B. <mail@mail.mail>
+Skeleton 0.2.1
+Valentin B. <vbrandl@riseup.net>
 Skeleton project manager
 
 USAGE:
@@ -61,3 +61,7 @@ SUBCOMMANDS:
 ```
 
 So to initialize a new Rust project named `test_project` one would execute `skeleton -l rust new test_project`. Therefore a configuration file `$HOME/.skeleton/rust.toml` must exist.
+
+## Shell completions
+
+Shell completions for Bash and [Fish](https://github.com/fish-shell/fish-shell) can be found in the `completions` folder. Completion for other shells will be available as soon as [clap](https://github.com/kbknapp/clap-rs) supports them.

@@ -6,6 +6,7 @@ extern crate hyper;
 extern crate hyper_native_tls;
 
 mod gitignore;
+mod cli;
 
 use std::fs::{File, OpenOptions, create_dir, read_dir};
 use std::io::{BufReader, Result, Error, ErrorKind};
@@ -13,8 +14,6 @@ use std::io::prelude::*;
 use std::path::Path;
 use std::process::{exit, Command};
 use std::env;
-
-use clap::{App, SubCommand};
 
 #[derive(Deserialize)]
 struct Config {
@@ -26,29 +25,14 @@ struct Config {
 }
 
 fn main() {
-    let matches = App::new("Skeleton")
-        .version("0.2.0")
-        .author("Valentin B. <mail@mail.mail>")
-        .about("Skeleton project manager")
-        .args_from_usage("-l, --lang=<LANG>  'Set language configuration'")
-        .subcommand(SubCommand::with_name("new")
-                        .about("create new project")
-                        .arg_from_usage("<NAME>   'The project name'"))
-        .subcommand(SubCommand::with_name("init").about("initialize existing project"))
-        .get_matches();
+    let matches = cli::build_cli().get_matches();
     let lang = matches.value_of("lang").unwrap();
 
     if let Some(matches) = matches.subcommand_matches("new") {
         println!("doing new {}", matches.value_of("NAME").unwrap());
     }
 
-    let config_path = match get_config_path(&lang.to_string()) {
-        Some(c) => c,
-        None => {
-            println!("Could not get home directory");
-            exit(1);
-        }
-    };
+    let config_path = get_config_path(&lang.to_string());
 
     let config: Config = match parse_config(config_path) {
         Ok(c) => c,
@@ -85,13 +69,7 @@ fn main() {
 
     if let Some(ref includes) = config.include {
         for incl in includes {
-            let path = match get_config_path(&incl) {
-                Some(p) => p,
-                None => {
-                    println!("Could not get config path for {}", incl);
-                    exit(1);
-                }
-            };
+            let path = get_config_path(&incl);
 
             let conf: Config = match parse_config(path) {
                 Ok(c) => c,
@@ -160,21 +138,13 @@ fn process_config(config: &Config) {
     }
 }
 
-fn get_config_path(lang: &String) -> Option<String> {
-    let mut config_path = match env::home_dir() {
-        Some(path) => {
-            match path.to_str() {
-                Some(p) => p.to_string(),
-                None => return None,
-            }
-        }
-        None => return None,
-    };
+fn get_config_path(lang: &String) -> String {
+    let mut config_path = env!("HOME").to_string();
 
     config_path.push_str("/.skeleton/");
     config_path.push_str(lang);
     config_path.push_str(".toml");
-    Some(config_path)
+    config_path
 }
 
 fn dir_is_empty(dir: &String) -> bool {
@@ -282,7 +252,7 @@ fn test_dir_is_empty() {
 
 #[test]
 fn test_get_config_path() {
-    let expected = get_config_path(&"foo".to_string()).unwrap();
+    let expected = get_config_path(&"foo".to_string());
     let mut actual = env::home_dir().unwrap().to_str().unwrap().to_string();
     actual.push_str("/.skeleton/foo.toml");
     assert_eq!(actual, expected);
