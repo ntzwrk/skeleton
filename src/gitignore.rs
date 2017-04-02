@@ -9,7 +9,7 @@ use hyper::net::HttpsConnector;
 use hyper::Error;
 use hyper_native_tls::NativeTlsClient;
 
-pub fn get_gitignore(targets: Vec<String>) -> Result<String, hyper::Error> {
+pub fn get_gitignore(targets: &Vec<String>) -> Result<String, hyper::Error> {
     let mut request = "https://www.gitignore.io/api/".to_string();
     for (i, target) in targets.iter().enumerate() {
         request.push_str(&target);
@@ -57,6 +57,6 @@ Cargo.lock
 
 # End of https://www.gitignore.io/api/rust
 ";
-    let actual = get_gitignore(vec!["rust".to_string()]).unwrap();
+    let actual = get_gitignore(&vec!["rust".to_string()]).unwrap();
     assert_eq!(expected.to_string(), actual);
 }

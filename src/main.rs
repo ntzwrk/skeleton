@@ -27,7 +27,7 @@ struct Config {
 
 fn main() {
     let matches = App::new("Skeleton")
-        .version("0.1")
+        .version("0.2.0")
         .author("Valentin B. <mail@mail.mail>")
         .about("Skeleton project manager")
         .args_from_usage("-l, --lang=<LANG>  'Set language configuration'")
@@ -42,25 +42,13 @@ fn main() {
         println!("doing new {}", matches.value_of("NAME").unwrap());
     }
 
-    let mut config_path = match env::home_dir() {
-        Some(path) => {
-            match path.to_str() {
-                Some(p) => p.to_string(),
-                None => {
-                    println!("Could not resolve $HOME");
-                    exit(1);
-                }
-            }
-        }
+    let config_path = match get_config_path(&lang.to_string()) {
+        Some(c) => c,
         None => {
-            println!("Could not resolve $HOME");
+            println!("Could not get home directory");
             exit(1);
         }
     };
-
-    config_path.push_str("/.skeleton/");
-    config_path.push_str(lang);
-    config_path.push_str(".toml");
 
     let config: Config = match parse_config(config_path) {
         Ok(c) => c,
@@ -95,7 +83,33 @@ fn main() {
         exit(1);
     }
 
-    if let Some(dirs) = config.mkdir {
+    if let Some(ref includes) = config.include {
+        for incl in includes {
+            let path = match get_config_path(&incl) {
+                Some(p) => p,
+                None => {
+                    println!("Could not get config path for {}", incl);
+                    exit(1);
+                }
+            };
+
+            let conf: Config = match parse_config(path) {
+                Ok(c) => c,
+                Err(e) => {
+                    println!("Could not read include '{}'. {}", incl, e);
+                    exit(1);
+                }
+            };
+            process_config(&conf);
+        }
+    }
+
+    process_config(&config);
+
+}
+
+fn process_config(config: &Config) {
+    if let Some(ref dirs) = config.mkdir {
         for dir in dirs {
             if !file_exists(&dir) {
                 match create_dir(dir.clone()) {
@@ -108,20 +122,23 @@ fn main() {
         }
     }
 
-    if let Some(gi) = config.gitignore {
+    if let Some(ref gi) = config.gitignore {
         let ign = gitignore::get_gitignore(gi).unwrap();
         let file = OpenOptions::new()
             .create_new(true)
             .append(true)
-            .open("gitignore");
+            .open(".gitignore");
         if let Ok(mut file) = file {
-            writeln!(file, "{}", ign);
+            match writeln!(file, "{}", ign) {
+                Ok(_) => {}
+                Err(e) => println!("Could not write .gitignore. {:?}", e),
+            }
         } else {
             println!("Could not write .gitignore");
         }
     }
 
-    if let Some(fnames) = config.touch {
+    if let Some(ref fnames) = config.touch {
         for file in fnames {
             if !create_file(&file) {
                 println!("Could not create file '{}'", file);
@@ -129,7 +146,7 @@ fn main() {
         }
     }
 
-    if let Some(cmds) = config.exec {
+    if let Some(ref cmds) = config.exec {
         for cmd in cmds {
             println!("Executing '{}'", cmd);
             match exec(&cmd) {
@@ -141,6 +158,23 @@ fn main() {
             }
         }
     }
+}
+
+fn get_config_path(lang: &String) -> Option<String> {
+    let mut config_path = match env::home_dir() {
+        Some(path) => {
+            match path.to_str() {
+                Some(p) => p.to_string(),
+                None => return None,
+            }
+        }
+        None => return None,
+    };
+
+    config_path.push_str("/.skeleton/");
+    config_path.push_str(lang);
+    config_path.push_str(".toml");
+    Some(config_path)
 }
 
 fn dir_is_empty(dir: &String) -> bool {
@@ -244,4 +278,12 @@ fn test_exec() {
 fn test_dir_is_empty() {
     let is_empty = dir_is_empty(&"./test".to_string());
     assert!(!is_empty);
+}
+
+#[test]
+fn test_get_config_path() {
+    let expected = get_config_path(&"foo".to_string()).unwrap();
+    let mut actual = env::home_dir().unwrap().to_str().unwrap().to_string();
+    actual.push_str("/.skeleton/foo.toml");
+    assert_eq!(actual, expected);
 }

@@ -35,11 +35,12 @@ mkdir = ['src', 'test']
 touch = ['README.md']
 exec = ['cargo init']
 gitignore = ['rust', 'vim']
+include = ['global']
 ```
 
 ## Usage
 ```
-Skeleton 0.1
+Skeleton 0.2.0
 Valentin B. <mail@mail.mail>
 Skeleton project manager
 
