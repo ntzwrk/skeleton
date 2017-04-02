@@ -138,6 +138,15 @@ fn process_config(config: &Config) {
     }
 }
 
+/// Returns the config path for a `lang` parameter.
+///
+/// This method concatenates $HOME with "/.skeleton/{lang}.toml"
+///
+/// # Examples
+///
+/// ```
+/// let path = get_config_path(&"rust".to_string())
+/// ```
 fn get_config_path(lang: &String) -> String {
     let mut config_path = env!("HOME").to_string();
 
@@ -147,6 +156,13 @@ fn get_config_path(lang: &String) -> String {
     config_path
 }
 
+/// Checks if a directory is empty
+///
+/// # Examples
+///
+/// ```
+/// let dir_is_empty(&".".to_string());
+/// ```
 fn dir_is_empty(dir: &String) -> bool {
     let paths = read_dir(dir).unwrap();
 
@@ -156,10 +172,14 @@ fn dir_is_empty(dir: &String) -> bool {
     true
 }
 
+/// Checks if a file exists
 fn file_exists(name: &String) -> bool {
     Path::new(&name).exists()
 }
 
+/// Executes a command using `sh` or `cmd.exe` depending on the used operating system.
+///
+/// Returns either a `Error` or a tuple `(stdout, stderr)`
 fn exec(cmd: &String) -> Result<(String, String)> {
     #[cfg(unix)]
     let shell = "sh";
@@ -188,6 +208,7 @@ fn exec(cmd: &String) -> Result<(String, String)> {
     Ok((stdout, stderr))
 }
 
+/// Creates a file if it doesn't exist.
 fn create_file(file_name: &String) -> bool {
     !file_exists(&file_name) &&
     match OpenOptions::new()
@@ -199,6 +220,7 @@ fn create_file(file_name: &String) -> bool {
     }
 }
 
+/// Parses a configuration file and returns the `Config` struct.
 fn parse_config(file_name: String) -> Result<Config> {
     let file = File::open(file_name)?;
     let mut reader = BufReader::new(file);

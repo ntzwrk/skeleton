@@ -1,5 +1,6 @@
 use clap::{App, SubCommand};
 
+/// Generates the clap argument parser
 pub fn build_cli() -> App<'static, 'static> {
     App::new("Skeleton")
         .version("0.2.1")
