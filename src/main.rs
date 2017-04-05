@@ -195,29 +195,19 @@ fn exec(cmd: &String) -> Result<(String, String)> {
         Err(e) => return Err(e),
     };
 
-    let stdout = match String::from_utf8(out.stdout) {
-        Ok(so) => so,
-        Err(e) => return Err(Error::new(ErrorKind::InvalidInput, e)),
-    };
+    Ok((String::from_utf8(out.stdout).unwrap_or("Could not parse stdout".to_string()),
+        String::from_utf8(out.stderr).unwrap_or("Could not parse stderr".to_string())))
 
-    let stderr = match String::from_utf8(out.stderr) {
-        Ok(se) => se,
-        Err(e) => return Err(Error::new(ErrorKind::InvalidInput, e)),
-    };
-
-    Ok((stdout, stderr))
 }
 
 /// Creates a file if it doesn't exist.
 fn create_file(file_name: &String) -> bool {
     !file_exists(&file_name) &&
-    match OpenOptions::new()
-              .append(true)
-              .create(true)
-              .open(file_name) {
-        Ok(_) => true,
-        Err(_) => false,
-    }
+    OpenOptions::new()
+        .append(true)
+        .create(true)
+        .open(file_name)
+        .is_ok()
 }
 
 /// Parses a configuration file and returns the `Config` struct.
@@ -228,10 +218,7 @@ fn parse_config(file_name: String) -> Result<Config> {
 
     reader.read_to_string(&mut contents)?;
 
-    match toml::from_str(&contents) {
-        Ok(c) => Ok(c),
-        Err(err) => Err(Error::new(ErrorKind::InvalidInput, err)),
-    }
+    toml::from_str(&contents).map_err(|err| Error::new(ErrorKind::InvalidInput, err))
 }
 
 #[test]
