@@ -5,7 +5,6 @@ use std::iter::Iterator;
 
 use hyper::Client;
 use hyper::net::HttpsConnector;
-use hyper::Error;
 use hyper_native_tls::NativeTlsClient;
 
 /// Fetches a gitignore file from [gitignore.io](https://gitignore.io)
@@ -39,10 +38,8 @@ pub fn get_gitignore(targets: &Vec<String>) -> Result<String, hyper::Error> {
     };
 
     let mut body = String::new();
-    match resp.read_to_string(&mut body) {
-        Ok(_) => {}
-        Err(e) => return Err(Error::from(e)),
-    };
+    resp.read_to_string(&mut body)?;
+
     Ok(body)
 }
 
