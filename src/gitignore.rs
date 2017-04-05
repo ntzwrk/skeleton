@@ -30,12 +30,9 @@ pub fn get_gitignore(targets: &Vec<String>) -> Result<String, hyper::Error> {
     let ssl = NativeTlsClient::new().unwrap();
     let con = HttpsConnector::new(ssl);
     let client = Client::with_connector(con);
-    let url = request.parse::<hyper::Url>().unwrap();
+    let url = request.parse::<hyper::Url>()?;
     let req = client.get(url);
-    let mut resp = match req.send() {
-        Ok(r) => r,
-        Err(err) => return Err(err),
-    };
+    let mut resp = req.send()?;
 
     let mut body = String::new();
     resp.read_to_string(&mut body)?;

@@ -164,7 +164,10 @@ fn get_config_path(lang: &String) -> String {
 /// let dir_is_empty(&".".to_string());
 /// ```
 fn dir_is_empty(dir: &String) -> bool {
-    let paths = read_dir(dir).unwrap();
+    let paths = match read_dir(dir) {
+        Ok(paths) => paths,
+        Err(_) => return false,
+    };
 
     for _ in paths {
         return false;
@@ -190,10 +193,7 @@ fn exec(cmd: &String) -> Result<(String, String)> {
     #[cfg(windows)]
     let arg1 = "/C";
 
-    let out = match Command::new(shell).arg(arg1).arg(cmd).output() {
-        Ok(o) => o,
-        Err(e) => return Err(e),
-    };
+    let out = Command::new(shell).arg(arg1).arg(cmd).output()?;
 
     Ok((String::from_utf8(out.stdout).unwrap_or("Could not parse stdout".to_string()),
         String::from_utf8(out.stderr).unwrap_or("Could not parse stderr".to_string())))
@@ -257,6 +257,8 @@ fn test_exec() {
 fn test_dir_is_empty() {
     let is_empty = dir_is_empty(&"./test".to_string());
     assert!(!is_empty);
+    let non_existent = dir_is_empty(&"./non_existent_dir".to_string());
+    assert!(!non_existent);
 }
 
 #[test]
