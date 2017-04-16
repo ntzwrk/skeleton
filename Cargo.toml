@@ -1,6 +1,6 @@
 [package]
 name = "skeleton"
-version = "0.2.1"
+version = "0.3.0"
 authors = ["Valentin Brandl <vbrandl@riseup.net>"]
 description = "Skeleton project manager"
 homepage = "https://github.com/ntzwrk/skeleton"
