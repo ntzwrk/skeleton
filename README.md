@@ -32,12 +32,18 @@ Language specific configuration must be placed in `${HOME}/.skeleton` and are re
 ### Configuration format
 
 ```toml
+order = ['mkdir', 'touch', 'exec', 'gitignore']
 mkdir = ['src', 'test']
 touch = ['README.md']
 exec = ['cargo init']
 gitignore = ['rust', 'vim']
 include = ['global']
 ```
+
+Every configuration setting is optional. The `order` setting is used to customize the execution order. The default
+order is `mkdir`, `gitignore`, `touch`, `exec`.
+
+Includes are executed first and in the provided order, followed by the selected configuration.
 
 ## Usage
 ```
