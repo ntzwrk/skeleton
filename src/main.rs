@@ -22,6 +22,7 @@ struct Config {
     exec: Option<Vec<String>>,
     gitignore: Option<Vec<String>>,
     include: Option<Vec<String>>,
+    order: Option<Vec<String>>,
 }
 
 fn main() {
@@ -78,16 +79,16 @@ fn main() {
                     exit(1);
                 }
             };
-            process_config(&conf);
+            process_config(conf);
         }
     }
 
-    process_config(&config);
+    process_config(config);
 
 }
 
-fn process_config(config: &Config) {
-    if let Some(ref dirs) = config.mkdir {
+fn mkdir(dirs: &Option<Vec<String>>) {
+    if let Some(ref dirs) = *dirs {
         for dir in dirs {
             if !file_exists(&dir) {
                 match create_dir(dir.clone()) {
@@ -99,9 +100,11 @@ fn process_config(config: &Config) {
             }
         }
     }
+}
 
-    if let Some(ref gi) = config.gitignore {
-        let ign = gitignore::get_gitignore(gi).unwrap();
+fn gitignore(gi: &Option<Vec<String>>) {
+    if let Some(ref gi) = *gi {
+        let ign = gitignore::get_gitignore(&gi).unwrap();
         let file = OpenOptions::new()
             .create_new(true)
             .append(true)
@@ -115,16 +118,20 @@ fn process_config(config: &Config) {
             println!("Could not write .gitignore");
         }
     }
+}
 
-    if let Some(ref fnames) = config.touch {
+fn touch(files: &Option<Vec<String>>) {
+    if let Some(ref fnames) = *files {
         for file in fnames {
             if !create_file(&file) {
                 println!("Could not create file '{}'", file);
             }
         }
     }
+}
 
-    if let Some(ref cmds) = config.exec {
+fn exec_list(cmd_list: &Option<Vec<String>>) {
+    if let Some(ref cmds) = *cmd_list {
         for cmd in cmds {
             println!("Executing '{}'", cmd);
             match exec(&cmd) {
@@ -134,6 +141,28 @@ fn process_config(config: &Config) {
                 }
                 Err(e) => println!("Failed to execute: {:?}", e),
             }
+        }
+    }
+}
+
+fn process_config(config: Config) {
+    let order: Vec<String> = match config.order {
+        Some(order) => order,
+        None => {
+            vec!["mkdir".to_string(),
+                 "gitignore".to_string(),
+                 "touch".to_string(),
+                 "exec".to_string()]
+        }
+    };
+
+    for ord in order {
+        match &*ord {
+            "mkdir" => mkdir(&config.mkdir),
+            "gitignore" => gitignore(&config.gitignore),
+            "touch" => touch(&config.touch),
+            "exec" => exec_list(&config.exec),
+            x => println!("Unknown operation \"{}\"", x),
         }
     }
 }
