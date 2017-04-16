@@ -23,3 +23,6 @@ hyper-native-tls = "0.2"
 
 [build-dependencies]
 clap = "2.22"
+
+[profile.release]
+lto = true
