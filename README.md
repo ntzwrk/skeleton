@@ -71,4 +71,4 @@ So to initialize a new Rust project named `test_project` one would execute `skel
 
 ## Shell completions
 
-Shell completions for Bash and [Fish](https://github.com/fish-shell/fish-shell) can be found in the `completions` folder. Completion for other shells will be available as soon as [clap](https://github.com/kbknapp/clap-rs) supports them.
+Shell completions for [Bash](https://www.gnu.org/software/bash/), [Fish](https://github.com/fish-shell/fish-shell), [Zsh](https://www.zsh.org/) and PowerShell can be found in the `completions` folder.

@@ -8,4 +8,6 @@ fn main() {
     let mut app = build_cli();
     app.gen_completions("skeleton", Shell::Bash, "completions/");
     app.gen_completions("skeleton", Shell::Fish, "completions/");
+    app.gen_completions("skeleton", Shell::Zsh, "completions/");
+    app.gen_completions("skeleton", Shell::PowerShell, "completions/");
 }
