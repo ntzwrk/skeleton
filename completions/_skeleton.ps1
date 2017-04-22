@@ -24,6 +24,9 @@
                         break
                     }
 
+                    default { 
+                        break
+                    }
                 }
             }
 
@@ -31,19 +34,19 @@
 
         switch ($command) {
 
-            '_Skeleton' {
+            '_skeleton' {
                 $completions = @('new', 'init', 'help', '-h', '-V', '-l', '--help', '--version', '--lang')
             }
 
-            '_Skeleton_new' {
+            '_skeleton_new' {
                 $completions = @('-h', '-V', '--help', '--version')
             }
 
-            '_Skeleton_init' {
+            '_skeleton_init' {
                 $completions = @('-h', '-V', '--help', '--version')
             }
 
-            '_Skeleton_help' {
+            '_skeleton_help' {
                 $completions = @('-h', '-V', '--help', '--version')
             }
 
