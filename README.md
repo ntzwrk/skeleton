@@ -1,6 +1,7 @@
 # Skeleton
 
-[![Build Status](https://travis-ci.org/ntzwrk/skeleton.svg?branch=master)](https://travis-ci.org/ntzwrk/skeleton)
+[![Travis Build Status](https://travis-ci.org/ntzwrk/skeleton.svg?branch=master)](https://travis-ci.org/ntzwrk/skeleton)
+[![AppVeyor Build status](https://ci.appveyor.com/api/projects/status/i3se9x1raxfgast5?svg=true)](https://ci.appveyor.com/project/ntzwrk/skeleton)
 [![codecov.io](http://codecov.io/github/ntzwrk/editorconfig.me/skeleton.svg?branch=master)](http://codecov.io/github/ntzwrk/skeleton?branch=master)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/ntzwrk/skeleton/blob/master/LICENSE)
 [![crates.io](https://meritbadge.herokuapp.com/skeleton)](https://crates.io/crates/skeleton)
