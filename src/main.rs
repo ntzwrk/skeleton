@@ -292,12 +292,18 @@ fn test_parse_config() {
 
 #[test]
 fn test_exec() {
-    let (stdout, stderr) = exec(&"echo -n test".to_string()).unwrap();
-    assert_eq!(stdout, "test".to_string());
+    let (stdout, stderr) = exec(&"echo test".to_string()).unwrap();
+    #[cfg(unix)]
+    assert_eq!(stdout, "test\n".to_string());
+    #[cfg(windows)]
+    assert_eq!(stdout, "test\r\n".to_string());
     assert_eq!(stderr, "".to_string());
-    let (stdout, stderr) = exec(&"echo -n test 1>&2".to_string()).unwrap();
+    let (stdout, stderr) = exec(&"echo test 1>&2".to_string()).unwrap();
     assert_eq!(stdout, "".to_string());
-    assert_eq!(stderr, "test".to_string());
+    #[cfg(unix)]
+    assert_eq!(stderr, "test\n".to_string());
+    #[cfg(windows)]
+    assert_eq!(stderr, "test\r\n".to_string());
 }
 
 #[test]
