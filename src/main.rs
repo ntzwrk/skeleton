@@ -296,7 +296,7 @@ fn test_exec() {
     #[cfg(unix)]
     assert_eq!(stdout, "test\n".to_string());
     #[cfg(windows)]
-    assert_eq!(stdout, "test \r\n".to_string());
+    assert_eq!(stdout, "test\r\n".to_string());
     assert_eq!(stderr, "".to_string());
     let (stdout, stderr) = exec(&"echo test 1>&2".to_string()).unwrap();
     assert_eq!(stdout, "".to_string());
