@@ -19,7 +19,7 @@ To install skeleton, you need the Rust package manager [cargo](https://github.co
 cargo install skeleton
 ```
 
-To install the most current version from master (might be buggy):
+To install the most current version from master:
 
 ```
 git clone https://github.com/ntzwrk/skeleton.git
@@ -29,7 +29,7 @@ cargo install
 
 ## Configuration
 
-Language specific configuration must be placed in `${HOME}/.skeleton` and are referenced by their name without the
+Language specific configuration must be placed in `$HOME/.skeleton` and are referenced by their name without the
 `.toml` extension.
 
 ### Configuration format
