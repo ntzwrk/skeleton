@@ -1,9 +1,11 @@
 use clap::{App, SubCommand};
 
+const VERSION: Option<&'static str> = option_env!("CARGO_PKG_VERSION");
+
 /// Generates the clap argument parser
 pub fn build_cli() -> App<'static, 'static> {
     App::new("Skeleton")
-        .version("0.2.1")
+        .version(VERSION.unwrap_or("unknown"))
         .author("Valentin B. <vbrandl@riseup.net>")
         .about("Skeleton project manager")
         .args_from_usage("-l, --lang=<LANG>  'Set language configuration'")

@@ -5,7 +5,9 @@
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/ntzwrk/skeleton/blob/master/LICENSE)
 [![crates.io](https://meritbadge.herokuapp.com/skeleton)](https://crates.io/crates/skeleton)
 
-Skeleton is a management tool for project prototypes. Prototypes are defined in language specific toml files. Skeleton can create directories, touch files, execute predefined commands and download a .gitignore list from [gitignore.io](https://gitignore.io).
+Skeleton is a management tool for project prototypes. Prototypes are defined in language specific toml files. Skeleton
+can create directories, touch files, execute predefined commands and download a .gitignore list from
+[gitignore.io](https://gitignore.io).
 
 Skeleton is written in pure Rust because I wanted to learn this language using a small hobby project.
 
@@ -27,7 +29,8 @@ cargo install
 
 ## Configuration
 
-Language specific configuration must be placed in `${HOME}/.skeleton` and are referenced by their name without the `.toml` extension.
+Language specific configuration must be placed in `${HOME}/.skeleton` and are referenced by their name without the
+`.toml` extension.
 
 ### Configuration format
 
@@ -47,7 +50,7 @@ Includes are executed first and in the provided order, followed by the selected 
 
 ## Usage
 ```
-Skeleton 0.2.1
+Skeleton 0.3.1
 Valentin B. <vbrandl@riseup.net>
 Skeleton project manager
 
@@ -67,8 +70,24 @@ SUBCOMMANDS:
     new     create new project
 ```
 
-So to initialize a new Rust project named `test_project` one would execute `skeleton -l rust new test_project`. Therefore a configuration file `$HOME/.skeleton/rust.toml` must exist.
+So to initialize a new Rust project named `test_project` one would execute `skeleton -l rust new test_project`.
+Therefore a configuration file `$HOME/.skeleton/rust.toml` must exist.
 
 ## Shell completions
 
-Shell completions for Bash and [Fish](https://github.com/fish-shell/fish-shell) can be found in the `completions` folder. Completion for other shells will be available as soon as [clap](https://github.com/kbknapp/clap-rs) supports them.
+Shell completions for [Bash](https://www.gnu.org/software/bash/), [Fish](https://github.com/fish-shell/fish-shell),
+[Zsh](https://www.zsh.org/) and PowerShell can be found in the `completions` folder.
+
+### Install Zsh completion
+
+You can put the Zsh completion file `_skeleton` in any directory (I use `$HOME/.zsh/completions`). Then you need
+to add this path to `$fpath` in your `.zshrc`:
+```
+fpath=($HOME/.zsh/completions $fpath)
+```
+
+To rebuild the completion cache you might need to execute the following commands:
+```
+rm -f .zcompdump
+compinit
+```

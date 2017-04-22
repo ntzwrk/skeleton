@@ -33,7 +33,13 @@ fn main() {
         println!("doing new {}", matches.value_of("NAME").unwrap());
     }
 
-    let config_path = get_config_path(&lang.to_string());
+    let config_path = match get_config_path(&lang.to_string()) {
+        Some(p) => p,
+        None => {
+            println!("Could not find home directory");
+            exit(1);
+        }
+    };
 
     let config: Config = match parse_config(config_path) {
         Ok(c) => c,
@@ -52,7 +58,7 @@ fn main() {
             match create_dir(name.clone()) {
                 Ok(_) => println!("Created directory '{}'", name),
                 Err(e) => {
-                    println!("Could not create direcotry '{}'. {:?}", name, e);
+                    println!("Could not create directory '{}'. {:?}", name, e);
                     exit(1);
                 }
             }
@@ -64,13 +70,19 @@ fn main() {
     }
 
     if !dir_is_empty(&".".to_string()) {
-        println!("Direcotry is not empty!");
+        println!("Directory is not empty!");
         exit(1);
     }
 
     if let Some(ref includes) = config.include {
         for incl in includes {
-            let path = get_config_path(&incl);
+            let path = match get_config_path(&incl) {
+                Some(p) => p,
+                None => {
+                    println!("Could not resolve home directory");
+                    exit(1);
+                }
+            };
 
             let conf: Config = match parse_config(path) {
                 Ok(c) => c,
@@ -176,13 +188,19 @@ fn process_config(config: Config) {
 /// ```
 /// let path = get_config_path(&"rust".to_string())
 /// ```
-fn get_config_path(lang: &String) -> String {
-    let mut config_path = env!("HOME").to_string();
+fn get_config_path(lang: &String) -> Option<String> {
+    let home = match env::home_dir() {
+        Some(p) => p,
+        None => return None,
+    };
+    let config_path_cow = home.to_string_lossy();
+    let mut config_path = config_path_cow.into_owned();
+    // let mut config_path = env!("HOME").to_string();
 
     config_path.push_str("/.skeleton/");
     config_path.push_str(lang);
     config_path.push_str(".toml");
-    config_path
+    Some(config_path)
 }
 
 /// Checks if a directory is empty
@@ -292,7 +310,7 @@ fn test_dir_is_empty() {
 
 #[test]
 fn test_get_config_path() {
-    let expected = get_config_path(&"foo".to_string());
+    let expected = get_config_path(&"foo".to_string()).unwrap();
     let mut actual = env::home_dir().unwrap().to_str().unwrap().to_string();
     actual.push_str("/.skeleton/foo.toml");
     assert_eq!(actual, expected);

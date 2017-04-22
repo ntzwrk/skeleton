@@ -1,6 +1,6 @@
 [package]
 name = "skeleton"
-version = "0.3.0"
+version = "0.3.1"
 authors = ["Valentin Brandl <vbrandl@riseup.net>"]
 description = "Skeleton project manager"
 homepage = "https://github.com/ntzwrk/skeleton"
@@ -23,3 +23,7 @@ hyper-native-tls = "0.2"
 
 [build-dependencies]
 clap = "2.22"
+
+[profile.release]
+lto = true
+panic = 'abort'
