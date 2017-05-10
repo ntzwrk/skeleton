@@ -28,6 +28,18 @@ cd skeleton
 cargo install
 ```
 
+To install the latest development version:
+
+```
+git clone https://github.com/ntzwrk/skeleton.git
+cd skeleton
+git checkout develop
+cargo install
+```
+
+Arch Linux users can install skeleton directly from the [Arch User
+Repository](https://aur.archlinux.org/packages/skeleton/).
+
 ## Configuration
 
 Language specific configuration must be placed in `$HOME/.skeleton` and are referenced by their name without the
