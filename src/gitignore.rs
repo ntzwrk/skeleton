@@ -16,10 +16,10 @@ use hyper_native_tls::NativeTlsClient;
 ///
 /// let gi = gitignore::get_gitignore(&vec!["rust".to_string, "vim".to_string()]).unwrap();
 /// ```
-pub fn get_gitignore(targets: &Vec<String>) -> Result<String, hyper::Error> {
+pub fn get_gitignore(targets: &[String]) -> Result<String, hyper::Error> {
     let mut request = "https://www.gitignore.io/api/".to_string();
     for (i, target) in targets.iter().enumerate() {
-        request.push_str(&target);
+        request.push_str(target);
 
         // skip last ","
         if i != targets.len() - 1 {

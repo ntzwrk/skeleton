@@ -1,6 +1,7 @@
 # Skeleton
 
-[![Build Status](https://travis-ci.org/ntzwrk/skeleton.svg?branch=master)](https://travis-ci.org/ntzwrk/skeleton)
+[![Travis Build Status](https://travis-ci.org/ntzwrk/skeleton.svg?branch=master)](https://travis-ci.org/ntzwrk/skeleton)
+[![AppVeyor Build status](https://ci.appveyor.com/api/projects/status/i3se9x1raxfgast5?svg=true)](https://ci.appveyor.com/project/ntzwrk/skeleton)
 [![codecov.io](http://codecov.io/github/ntzwrk/editorconfig.me/skeleton.svg?branch=master)](http://codecov.io/github/ntzwrk/skeleton?branch=master)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/ntzwrk/skeleton/blob/master/LICENSE)
 [![crates.io](https://meritbadge.herokuapp.com/skeleton)](https://crates.io/crates/skeleton)
@@ -19,7 +20,7 @@ To install skeleton, you need the Rust package manager [cargo](https://github.co
 cargo install skeleton
 ```
 
-To install the most current version from master (might be buggy):
+To install the most current version from master:
 
 ```
 git clone https://github.com/ntzwrk/skeleton.git
@@ -29,7 +30,7 @@ cargo install
 
 ## Configuration
 
-Language specific configuration must be placed in `${HOME}/.skeleton` and are referenced by their name without the
+Language specific configuration must be placed in `$HOME/.skeleton` and are referenced by their name without the
 `.toml` extension.
 
 ### Configuration format
@@ -50,7 +51,7 @@ Includes are executed first and in the provided order, followed by the selected 
 
 ## Usage
 ```
-Skeleton 0.3.1
+Skeleton 0.3.2
 Valentin B. <vbrandl@riseup.net>
 Skeleton project manager
 
