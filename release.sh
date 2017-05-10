@@ -6,4 +6,10 @@ echo "Generated manpage"
 cargo pkgbuild
 echo "Generated PKGBUILD"
 
+echo "Checking for outdated crates"
+cargo outdated
+
+echo "Checking for vulnerable crates"
+cargo audit
+
 echo "Next steps: push release, publish crate and update AUR package"
