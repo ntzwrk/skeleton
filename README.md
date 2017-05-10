@@ -31,9 +31,8 @@ cargo install
 To install the latest development version:
 
 ```
-git clone https://github.com/ntzwrk/skeleton.git
+git clone -b develop https://github.com/ntzwrk/skeleton.git
 cd skeleton
-git checkout develop
 cargo install
 ```
 
