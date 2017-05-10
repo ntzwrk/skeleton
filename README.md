@@ -51,7 +51,7 @@ Includes are executed first and in the provided order, followed by the selected 
 
 ## Usage
 ```
-Skeleton 0.3.2
+Skeleton 0.3.3
 Valentin B. <vbrandl@riseup.net>
 Skeleton project manager
 
