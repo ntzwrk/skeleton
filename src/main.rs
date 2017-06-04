@@ -171,12 +171,49 @@ fn process_config(config: Config) {
         }
     };
 
+    let mut flag_mkdir = false;
+    let mut flag_gitignore = false;
+    let mut flag_touch = false;
+    let mut flag_exec = false;
+
     for ord in order {
         match &*ord {
-            "mkdir" => mkdir(&config.mkdir),
-            "gitignore" => gitignore(&config.gitignore),
-            "touch" => touch(&config.touch),
-            "exec" => exec_list(&config.exec),
+            "mkdir" => {
+                if !flag_mkdir {
+                    flag_mkdir = true;
+                    mkdir(&config.mkdir);
+                } else {
+                    println!("Already did mkdir");
+                    continue;
+                }
+            }
+            "gitignore" => {
+                if !flag_gitignore {
+                    flag_gitignore = true;
+                    gitignore(&config.gitignore);
+                } else {
+                    println!("Already did gitignore");
+                    continue;
+                }
+            }
+            "touch" => {
+                if !flag_touch {
+                    flag_touch = true;
+                    touch(&config.touch);
+                } else {
+                    println!("Already did touch");
+                    continue;
+                }
+            }
+            "exec" => {
+                if !flag_exec {
+                    flag_exec = true;
+                    exec_list(&config.exec);
+                } else {
+                    println!("Already did exec");
+                    continue;
+                }
+            }
             x => println!("Unknown operation \"{}\"", x),
         }
     }
