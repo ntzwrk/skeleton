@@ -44,7 +44,7 @@ fn main() {
         }
     };
 
-    let config: Config = match parse_config(config_path) {
+    let config: Config = match parse_config(&config_path) {
         Ok(c) => c,
         Err(err) => {
             println!("Error while parsing config! {:?}", err);
@@ -87,7 +87,7 @@ fn main() {
                 }
             };
 
-            let conf: Config = match parse_config(path) {
+            let conf: Config = match parse_config(&path) {
                 Ok(c) => c,
                 Err(e) => {
                     println!("Could not read include '{}'. {}", incl, e);
@@ -226,7 +226,7 @@ fn process_config(config: Config) {
 /// # Examples
 ///
 /// ```
-/// let path = get_config_path(&"rust")
+/// let path = get_config_path("rust")
 /// ```
 fn get_config_path(lang: &str) -> Option<String> {
     let home = match env::home_dir() {
@@ -235,7 +235,6 @@ fn get_config_path(lang: &str) -> Option<String> {
     };
     let config_path_cow = home.to_string_lossy();
     let mut config_path = config_path_cow.into_owned();
-    // let mut config_path = env!("HOME").to_string();
 
     config_path.push_str("/.skeleton/");
     config_path.push_str(lang);
@@ -248,7 +247,7 @@ fn get_config_path(lang: &str) -> Option<String> {
 /// # Examples
 ///
 /// ```
-/// let dir_is_empty(&".");
+/// let dir_is_empty(".");
 /// ```
 fn dir_is_empty(dir: &str) -> bool {
     let paths = match read_dir(dir) {
@@ -298,7 +297,7 @@ fn create_file(file_name: &str) -> bool {
 }
 
 /// Parses a configuration file and returns the `Config` struct.
-fn parse_config(file_name: String) -> Result<Config> {
+fn parse_config(file_name: &str) -> Result<Config> {
     let file = File::open(file_name)?;
     let mut reader = BufReader::new(file);
     let mut contents = String::new();
@@ -316,7 +315,7 @@ fn test_file_exists() {
 
 #[test]
 fn test_parse_config() {
-    let conf = parse_config("test/foo.toml".to_string()).unwrap();
+    let conf = parse_config("test/foo.toml").unwrap();
     let gi = conf.gitignore.unwrap();
     assert_eq!(gi, vec!["rust".to_string(), "vim".to_string()]);
 
