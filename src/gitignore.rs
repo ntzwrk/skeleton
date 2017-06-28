@@ -9,12 +9,12 @@ use hyper_native_tls::NativeTlsClient;
 
 /// Fetches a gitignore file from [gitignore.io](https://gitignore.io)
 ///
-/// # Example
+/// # Examples
 ///
 /// ```
 /// mod gitignore
 ///
-/// let gi = gitignore::get_gitignore(&vec!["rust".to_string, "vim".to_string()]).unwrap();
+/// let gi = gitignore::get_gitignore(&vec![format!("rust")]).unwrap();
 /// ```
 pub fn get_gitignore(targets: &[String]) -> Result<String, hyper::Error> {
     let mut request = "https://www.gitignore.io/api/".to_string();

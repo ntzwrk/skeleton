@@ -102,60 +102,52 @@ fn main() {
 
 }
 
-fn mkdir(dirs: &Option<Vec<String>>) {
-    if let Some(ref dirs) = *dirs {
-        for dir in dirs {
-            if !file_exists(dir) {
-                match create_dir(dir.clone()) {
-                    Ok(_) => println!("Created directory '{}'", dir),
-                    Err(e) => println!("Could not create directory '{}'. {:?}", dir, e),
-                }
-            } else {
-                println!("Directory '{}' already exists", dir);
-            }
-        }
-    }
-}
-
-fn gitignore(gi: &Option<Vec<String>>) {
-    if let Some(ref gi) = *gi {
-        let ign = gitignore::get_gitignore(gi).unwrap();
-        let file = OpenOptions::new()
-            .create_new(true)
-            .append(true)
-            .open(".gitignore");
-        if let Ok(mut file) = file {
-            match writeln!(file, "{}", ign) {
-                Ok(_) => {}
-                Err(e) => println!("Could not write .gitignore. {:?}", e),
+fn mkdir(dirs: &Vec<String>) {
+    for dir in dirs {
+        if !file_exists(dir) {
+            match create_dir(dir.clone()) {
+                Ok(_) => println!("Created directory '{}'", dir),
+                Err(e) => println!("Could not create directory '{}'. {:?}", dir, e),
             }
         } else {
-            println!("Could not write .gitignore");
+            println!("Directory '{}' already exists", dir);
         }
     }
 }
 
-fn touch(files: &Option<Vec<String>>) {
-    if let Some(ref fnames) = *files {
-        for file in fnames {
-            if !create_file(file) {
-                println!("Could not create file '{}'", file);
-            }
+fn gitignore(gi: &Vec<String>) {
+    let ign = gitignore::get_gitignore(gi).unwrap();
+    let file = OpenOptions::new()
+        .create_new(true)
+        .append(true)
+        .open(".gitignore");
+    if let Ok(mut file) = file {
+        match writeln!(file, "{}", ign) {
+            Ok(_) => {}
+            Err(e) => println!("Could not write .gitignore. {:?}", e),
+        }
+    } else {
+        println!("Could not write .gitignore");
+    }
+}
+
+fn touch(files: &Vec<String>) {
+    for file in files {
+        if !create_file(file) {
+            println!("Could not create file '{}'", file);
         }
     }
 }
 
-fn exec_list(cmd_list: &Option<Vec<String>>) {
-    if let Some(ref cmds) = *cmd_list {
-        for cmd in cmds {
-            println!("Executing '{}'", cmd);
-            match exec(cmd) {
-                Ok((out, err)) => {
-                    println!("stdout: {}", out);
-                    println!("stderr: {}", err);
-                }
-                Err(e) => println!("Failed to execute: {:?}", e),
+fn exec_list(cmd_list: &Vec<String>) {
+    for cmd in cmd_list {
+        println!("Executing '{}'", cmd);
+        match exec(cmd) {
+            Ok((out, err)) => {
+                println!("stdout: {}", out);
+                println!("stderr: {}", err);
             }
+            Err(e) => println!("Failed to execute: {:?}", e),
         }
     }
 }
@@ -164,10 +156,10 @@ fn process_config(config: Config) {
     let order: Vec<String> = match config.order {
         Some(order) => order,
         None => {
-            vec!["mkdir".to_string(),
-                 "gitignore".to_string(),
-                 "touch".to_string(),
-                 "exec".to_string()]
+            vec![format!("mkdir"),
+                 format!("gitignore"),
+                 format!("touch"),
+                 format!("exec")]
         }
     };
 
@@ -180,8 +172,12 @@ fn process_config(config: Config) {
         match &*ord {
             "mkdir" => {
                 if !flag_mkdir {
-                    flag_mkdir = true;
-                    mkdir(&config.mkdir);
+                    if let Some(ref mkdirs) = config.mkdir {
+                        flag_mkdir = true;
+                        mkdir(mkdirs);
+                    } else {
+                        println!("Nothing defined in mkdir");
+                    }
                 } else {
                     println!("Already did mkdir");
                     continue;
@@ -189,8 +185,10 @@ fn process_config(config: Config) {
             }
             "gitignore" => {
                 if !flag_gitignore {
-                    flag_gitignore = true;
-                    gitignore(&config.gitignore);
+                    if let Some(ref gitignores) = config.gitignore {
+                        flag_gitignore = true;
+                        gitignore(gitignores);
+                    }
                 } else {
                     println!("Already did gitignore");
                     continue;
@@ -198,8 +196,10 @@ fn process_config(config: Config) {
             }
             "touch" => {
                 if !flag_touch {
-                    flag_touch = true;
-                    touch(&config.touch);
+                    if let Some(ref touchs) = config.touch {
+                        flag_touch = true;
+                        touch(touchs);
+                    }
                 } else {
                     println!("Already did touch");
                     continue;
@@ -207,8 +207,10 @@ fn process_config(config: Config) {
             }
             "exec" => {
                 if !flag_exec {
-                    flag_exec = true;
-                    exec_list(&config.exec);
+                    if let Some(ref execs) = config.exec {
+                        flag_exec = true;
+                        exec_list(execs);
+                    }
                 } else {
                     println!("Already did exec");
                     continue;
